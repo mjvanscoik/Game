@@ -8,6 +8,7 @@ using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace _101_PairGame
 {
@@ -16,7 +17,7 @@ namespace _101_PairGame
     {
         public void Seed()
         {
-
+            Console.Clear();
             Player player = new Player(6, 0);
             //List of words to pull from.
             Word dog = new Word("dog", "_ _ _", 3);
@@ -97,16 +98,16 @@ namespace _101_PairGame
              "\n" +
              "Press a single letter key to guess:"); //Insert display for wordLength
             Console.WriteLine(str);
-            CaptureUserInput(str1); //str1
+            CaptureUserInput(str1, str); //str1
             
 
             //char userInput = ReturnGuess(charArray);
 
         }
-        public void CaptureUserInput(List<string> str1) //List<string> loopList
+        public void CaptureUserInput(List<string> str1, string letterLength) //List<string> loopList
         {
             string userInput = Char.ToString(Console.ReadKey().KeyChar);
-            ReturnGuess(userInput, str1);
+            ReturnGuess(userInput, str1, letterLength);
 
         }
         //You need to capture user input and store it in a collection or string
@@ -114,7 +115,7 @@ namespace _101_PairGame
        
         public List<string> listofGoodUserInput = new List<string>();
         public List<string> listOfBadUserInput = new List<string>();
-        public void ReturnGuess(string userInput, List<string> wordLetters)
+        public void ReturnGuess(string userInput, List<string> wordLetters, string letterLength)
 
         {
           
@@ -126,44 +127,52 @@ namespace _101_PairGame
                 {
                     Console.Clear();
                     listofGoodUserInput.Add(userInput);
-                    foreach (string i in listofGoodUserInput)
-                    {
-                        Console.Write($"{i}\n" +
-                            $" ");
-                    }
-                    Console.WriteLine($"{userInput} was a letter in the word!");
+                    listofGoodUserInput.ForEach(Console.WriteLine);
+                    
                     
 
                     if (listofGoodUserInput.Count >= wordLetters.Count)
                     {
                         Console.Clear();
-                        Console.WriteLine("You won the game!");
-                        Console.ReadLine();
+                        Console.WriteLine("You won the game! You must play again.");
+                        Console.ReadKey();
+                        Seed();
                     }
                     else
                     {
-                       
-                        Console.WriteLine(value: $"{listofGoodUserInput[0]}    Keep Guessing!");
-                        CaptureUserInput(wordLetters);
+                        Console.Clear();
+                        Console.WriteLine(letterLength);
+                        Console.Write("Mistakes you've made: "); 
+                        listOfBadUserInput.ForEach(Console.Write);
+                        Console.WriteLine();
+                        Console.Write("Correct letters you've guessed: ");
+                        listofGoodUserInput.ForEach(Console.Write);
+                        Console.WriteLine($"\n" +
+                             $"{userInput} was a letter in the word!");
+                        Console.WriteLine("Keep guessing! Above are the correct letters that you've guessed");
+                        CaptureUserInput(wordLetters, letterLength);
                     }
                 }
                 else if (listOfBadUserInput.Count >= 6) 
                 {
                     Console.Clear();
-                    Console.WriteLine($"You lost the game!");
-                    Console.ReadLine();
-                } //else if
+                    Console.WriteLine($"You lost the game! You STINK! Try again...");
+                    Console.ReadKey();
+                    Seed();
+                } 
                 else
                 {
                     Console.Clear();
+                    Console.WriteLine(letterLength);
                     listOfBadUserInput.Add(userInput);
-                    foreach (string i in listofGoodUserInput)
-                    {
-                        Console.Write($"{i}\n" +
-                            $" ");
-                    }
-                    Console.WriteLine($"{userInput} was not a letter in the word."); //Display limbs lost
-                    CaptureUserInput(wordLetters);
+                    Console.Write("Mistakes you've made: "); listOfBadUserInput.ForEach(Console.Write);
+                    Console.WriteLine();
+                    Console.Write("Correct letters you've guessed: ");
+                    listofGoodUserInput.ForEach(Console.Write);
+                    Console.WriteLine();
+                    Console.WriteLine($"\n" +
+                        $"{userInput} was not a letter in the word. Above are the letters you guessed incorrectly."); //Display limbs lost
+                    CaptureUserInput(wordLetters, letterLength);
                 }
             }
 
